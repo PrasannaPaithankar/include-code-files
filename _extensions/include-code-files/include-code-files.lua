@@ -39,11 +39,11 @@ local function snippet(cb, fh)
   for line in fh:lines() do
     if start == nil then
       if string.match(line, p_start) then
-        start = line_no
+        start = line_no + 1
       end
     elseif stop == nil then
       if string.match(line, p_stop) then
-        stop = line_no
+        stop = line_no - 1
       end
     else
       break
@@ -51,13 +51,16 @@ local function snippet(cb, fh)
     line_no = line_no + 1
   end
 
+  -- Reset so nothing is broken later on.
+  fh:seek("set")
+
   -- If start and stop not found, just continue
   if start == nil or stop == nil then
     return nil
   end
 
-  cb.attributes.startLine = start
-  cb.attributes.stopLine = stop
+  cb.attributes.startLine = tostring(start)
+  cb.attributes.endLine = tostring(stop)
 end
 
 --- Filter function for code blocks
