@@ -17,21 +17,29 @@ local function snippet(cb, fh)
     return
   end
 
-  -- http://lua-users.org/wiki/PatternsTutorial
+  -- Cannot capture enum: http://lua-users.org/wiki/PatternsTutorial
   local comment
+  local comment_stop = ""
   if
     string.match(cb.attributes.include, ".py$")
     or string.match(cb.attributes.include, ".jl$")
     or string.match(cb.attributes.include, ".r$")
   then
     comment = "#"
-  elseif string.match(cb.attributes.include, ".ojs$") then
+  elseif string.match(cb.attributes.include, ".o?js$") or string.match(cb.attributes.include, ".css$") then
     comment = "//"
+  elseif string.match(cb.attributes.include, ".lua$") then
+    comment = "--"
+  elseif string.match(cb.attributes.include, ".html$") then
+    comment = "<!%-%-"
+    comment_stop = " *%-%->"
+  else
+    -- If not known assume that it is something one or two long and not alphanumeric.
+    comment = "%W%W?"
   end
 
-  local p_start = string.format("^ *%s start snippet %s", comment, cb.attributes.snippet)
-  local p_stop = string.format("^ *%s end snippet %s", comment, cb.attributes.snippet)
-
+  local p_start = string.format("^ *%s start snippet %s%s", comment, cb.attributes.snippet, comment_stop)
+  local p_stop = string.format("^ *%s end snippet %s%s", comment, cb.attributes.snippet, comment_stop)
   local start, stop = nil, nil
 
   -- Cannot use pairs.
