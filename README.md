@@ -56,3 +56,28 @@ in the dedent area).
     ```{.python include="script.py" dedent=4}
     ```
 
+### Snippets
+
+Using the `snippet` attribute, one may use ``pandoc-include-code`` style 
+snippets, for instance
+
+    ```{.python include="script.py" snippet="main"}
+    ```
+
+will include the snippet 'main' which is enclosed between ``# start snippet main``
+and ``# end snippet main`` in the following 
+
+```python
+# script.py
+
+# start snippet main
+def main():
+    print("It works!")
+
+# end snippet main
+```
+
+
+For now this should support include for ``python``, ``r``, ``julia``, ``html``,
+``js``, ``ojs``, and ``css``. It might work on other documents too, but will 
+have to guess.
