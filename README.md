@@ -61,7 +61,7 @@ in the dedent area).
 Using the `snippet` attribute, one may use ``pandoc-include-code`` style 
 snippets, for instance
 
-    ```{.python include="script.py" snippet="main"
+    ```{.python include="script.py" snippet="main"}
     ```
 
 will include the snippet 'main' which is enclosed between ``# start snippet main``
