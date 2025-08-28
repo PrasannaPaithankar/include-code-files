@@ -36,6 +36,11 @@ Once adding the filter to you page or project, the simplest way to use the filte
     ```{.python include="script.py"}
     ```
 
+Also supports remote files:
+
+    ```{.python include="https://raw.githubusercontent.com/username/repo/branch/script.py"}
+    ```
+
 You can still use other attributes, and classes, to control the code blocks:
 
     ```{.python include="script.py" code-line-numbers="true"}

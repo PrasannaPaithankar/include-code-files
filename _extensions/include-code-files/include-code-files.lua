@@ -71,11 +71,48 @@ local function snippet(cb, fh)
   cb.attributes.endLine = tostring(stop)
 end
 
+--- File handler for local/remote file
+local function file_handler(cb)
+  if string.match(cb.attributes.include, "https?://") then
+    local _, str = pandoc.mediabag.fetch(cb.attributes.include)
+
+    local pos = 1
+    local lines = {}
+    for line in str:gmatch("([^\n]*)\n?") do
+      table.insert(lines, line .. "\n")
+    end
+
+    local idx = 0
+    return {
+      lines = function()
+        return function()
+          idx = idx + 1
+          return lines[idx]
+        end
+      end,
+      read = function(_, mode)
+        if mode == "*a" then
+          return str
+        end
+      end,
+      seek = function(_, _)
+        idx = 0
+        return 0
+      end,
+      close = function() end,
+    }
+
+  else
+    return io.open(cb.attributes.include)
+  end
+end
+
 --- Filter function for code blocks
 local function transclude(cb)
   if cb.attributes.include then
     local content = ""
-    local fh = io.open(cb.attributes.include)
+    local fh = file_handler(cb)
+
     if not fh then
       io.stderr:write("Cannot open file " .. cb.attributes.include .. " | Skipping includes\n")
     else
